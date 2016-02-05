@@ -1,6 +1,8 @@
 project("my_project" C)
 cmake_minimum_required(VERSION 3.2)
 
+enable_testing()
+
 list(APPEND CMAKE_MODULE_PATH
     ${CMAKE_SOURCE_DIR}/cmake/vala/
     ${CMAKE_SOURCE_DIR}/cmake/glib/
@@ -113,3 +115,16 @@ add_executable(my_project_unit_tests
   	${VALA_UNIT_TESTS_C}
 )
 target_link_libraries(my_project_unit_tests lmy_project -lm)
+
+# List of tests in the `my_project_unit_tests' executable that you
+# want to execute.  Note that this is a list; to add additional tests
+# you don't need to quote them, just use whitespace to separate them
+# and you're done.
+set(MY_PROJECT_TESTS
+  /my_class/foo)
+
+# Add the tests in the MY_PROJECT_TESTS list to ctest
+foreach(test_name ${MY_PROJECT_TESTS})
+  add_test(NAME ${test_name}
+    COMMAND $<TARGET_FILE:my_project_unit_tests> -p ${test_name})
+endforeach(test_name)

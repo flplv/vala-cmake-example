@@ -11,17 +11,18 @@ The built is divided in 3 targets:
 
 Have fun!
 
-I use the Atom editor to write Vala code with the following plugins:
+Atom editor is recommended with the following plugins:
 - language-vala
 - language-cmake
 - atom-beautify (file .jsbeautifyrc and .uncrustify.vala.cfg are used to format code)
-File .jsbeautifyrc is 
 
+Improvements Hypothesis
+-----------------------
+- Add an automatically tests detecting system to fill the CMakeLists.txt.  
 
-------
-
-Using TestCase Class from Gee project
-
-Using Vala Cmake functions from https://github.com/jakobwesthoff/Vala_CMake
-
-Using the Elementary uncrustify config from https://github.com/PerfectCarl/elementary-uncrustify
+Special Thanks
+--------------
+This project uses a few pieces of other projects, thanks to:
+- TestCase Class from Gee project
+- Vala Cmake functions from https://github.com/jakobwesthoff/Vala_CMake
+- The Elementary uncrustify config from https://github.com/PerfectCarl/elementary-uncrustify

@@ -19,6 +19,9 @@ File .jsbeautifyrc is
 
 
 ------
-Using TestCase Class from Gee project;
+
+Using TestCase Class from Gee project
+
 Using Vala Cmake functions from https://github.com/jakobwesthoff/Vala_CMake
+
 Using the Elementary uncrustify config from https://github.com/PerfectCarl/elementary-uncrustify

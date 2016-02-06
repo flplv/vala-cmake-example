@@ -24,3 +24,6 @@ set_target_properties(my-project PROPERTIES
 	INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/src_lib)
 
 target_link_libraries(my-project my-project-${MY_PROJECT_VERSION_API} -lm)
+
+install (TARGETS my-project
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

@@ -1,0 +1,24 @@
+language: c
+# We want to use Ubuntu 14.04 instead of the default (12.04)
+dist: trusty
+# sudo is required so we can install an updated version of Vala from
+# the Vala Team PPA
+sudo: required
+os:
+  - linux
+branches:
+  except:
+    # We don't want to build branches that are really only intended
+    # for other platforms.  Remember, Travis CI is a free service, we
+    # don't want to tax it unnecessarily.
+    - /^(wip\/)?(appveyor|msvc|windows)(\-.+)?$/
+before_install:
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq python-software-properties
+ - sudo apt-add-repository -y ppa:vala-team/ppa
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq valac libgee-0.8 valadoc
+script:
+ - ./autogen.sh
+ - make
+ - make test

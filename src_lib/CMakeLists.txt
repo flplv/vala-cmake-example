@@ -9,9 +9,7 @@ PACKAGES
 	gee-0.8
 	posix
 OPTIONS
-	--target-glib=2.44
-	--thread
-	--debug
+	${MY_PROJECT_VALA_FLAGS}
 GENERATE_HEADER
 	my-project-${MY_PROJECT_VERSION_API}
 GENERATE_VAPI

@@ -13,9 +13,7 @@ PACKAGES
 CUSTOM_VAPIS
 	${CMAKE_BINARY_DIR}/src_lib/my-project-${MY_PROJECT_VERSION_API}.vapi
 OPTIONS
-	--target-glib=2.44
-	--thread
-	--debug)
+	${MY_PROJECT_VALA_FLAGS})
 
 add_executable(my_project_unit_tests
 	${VALA_UNIT_TESTS_C})

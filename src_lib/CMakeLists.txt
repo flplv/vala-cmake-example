@@ -18,8 +18,12 @@ GENERATE_VAPI
 	../bin/my_project
 )
 
-add_library(_my_project
+add_library(_my_project-${MY_PROJECT_VERSION_API}
 	STATIC
     EXCLUDE_FROM_ALL
-	${VALA_C} my_project.h
+	${VALA_C} ../bin/my_project.h
 )
+
+set_target_properties ("_my_project-${MY_PROJECT_VERSION_API}" PROPERTIES
+  SOVERSION "${MY_PROJECT_SOVERSION_CURRENT}.${MY_PROJECT_SOVERSION_REVISION}.${MY_PROJECT_SOVERSION_AGE}"
+  VERSION   "${MY_PROJECT_SOVERSION_CURRENT}.${MY_PROJECT_SOVERSION_REVISION}")

@@ -19,4 +19,4 @@ OPTIONS
 add_executable(my_project
     ${VALA_MAIN_C}
 )
-target_link_libraries(my_project _my_project -lm)
+target_link_libraries(my_project _my_project-${MY_PROJECT_VERSION_API} -lm)

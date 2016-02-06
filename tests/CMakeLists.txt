@@ -21,7 +21,7 @@ OPTIONS
 add_executable(my_project_unit_tests
   	${VALA_UNIT_TESTS_C}
 )
-target_link_libraries(my_project_unit_tests _my_project -lm)
+target_link_libraries(my_project_unit_tests _my_project-${MY_PROJECT_VERSION_API} -lm)
 
 # List of tests in the `my_project_unit_tests' executable that you
 # want to execute.  Note that this is a list; to add additional tests

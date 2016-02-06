@@ -42,6 +42,8 @@ set (MY_PROJECT_SOVERSION_CURRENT  ${MY_PROJECT_VERSION_MAJOR})
 set (MY_PROJECT_SOVERSION_REVISION ${MY_PROJECT_VERSION_MINOR})
 set (MY_PROJECT_SOVERSION_AGE      ${MY_PROJECT_VERSION_REVISION})
 
+include(GNUInstallDirs)
+
 enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH
@@ -59,11 +61,6 @@ pkg_check_modules(GIO REQUIRED gio-2.0)
 pkg_check_modules(GTHREAD REQUIRED gthread-2.0)
 pkg_check_modules(GEE REQUIRED gee-0.8)
 
-
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-
 include_directories(${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 set(CFLAGS
@@ -73,6 +70,21 @@ set(CFLAGS
 	${GEE_CFLAGS} ${GEE_CFLAGS_OTHER}
 )
 add_definitions(${CFLAGS})
+
+# Common Vala flags to use for the project.
+set(MY_PROJECT_VALA_FLAGS "--target-glib=2.32")
+
+# If someone doesn't specify a build type, default to "Debug"
+if(CMAKE_BUILD_TYPE STREQUAL "")
+  set(CMAKE_BUILD_TYPE "Debug")
+endif(CMAKE_BUILD_TYPE STREQUAL "")
+
+# Unfortunately, UseVala.cmake doesn't support the standard
+# CMAKE_<LANG>_FLAGS_{DEBUG,RELEASE}, so we'll have to pass these
+# manually later on.
+if (CMAKE_BUILD_TYPE MATCHES "Debug")
+  list(APPEND MY_PROJECT_VALA_FLAGS "--debug")
+endif ()
 
 set(LIBS
 	${GOBJECT_LIBRARIES}

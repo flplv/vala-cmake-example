@@ -50,6 +50,17 @@ list(APPEND CMAKE_MODULE_PATH
     ${CMAKE_SOURCE_DIR}/cmake/vala/
     ${CMAKE_SOURCE_DIR}/cmake/glib/
 )
+
+# This creates a "dist" target which will generate a release tarball
+# for your project.
+set(CPACK_SOURCE_GENERATOR "TBZ2")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME
+  "${CMAKE_PROJECT_NAME}-${MY_PROJECT_VERSION_MAJOR}.${MY_PROJECT_VERSION_MINOR}.${MY_PROJECT_VERSION_REVISION}")
+set(CPACK_SOURCE_IGNORE_FILES
+  "/build/;/.git/;/.bzr/;~$;${CPACK_SOURCE_IGNORE_FILES}")
+include(CPack)
+add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
+
 find_package(GLIB2 REQUIRED)
 
 find_package(Vala "0.30" REQUIRED)

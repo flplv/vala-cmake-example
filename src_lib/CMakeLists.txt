@@ -3,7 +3,7 @@
 # Static Library Target: linked against main and against tests.
 
 vala_precompile(MY_PROJECT_C_SOURCES
-    config.vala
+    "${CMAKE_CURRENT_BINARY_DIR}/config.vala"
 	my_class.vala
 PACKAGES
 	gio-2.0

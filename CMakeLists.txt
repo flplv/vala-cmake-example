@@ -1,4 +1,4 @@
-project("my_project" C)
+project("my-project" C)
 cmake_minimum_required(VERSION 3.2)
 
 # Library version

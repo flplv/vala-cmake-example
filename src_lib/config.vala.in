@@ -1,0 +1,4 @@
+namespace Config {
+    public const string BUILD_VERSION = "@MY_PROJECT_VERSION_MAJOR@.@MY_PROJECT_VERSION_MINOR@.@MY_PROJECT_VERSION_REVISION@";
+    public const string PACKAGE_SUFFIX = "@MY_PROJECT_VERSION_API@";
+}

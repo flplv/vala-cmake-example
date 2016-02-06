@@ -9,4 +9,4 @@ Name: @PACKAGE_NAME@
 Description: Demo library
 Version: @PACKAGE_VERSION@
 Libs: -L${libdir} -lmy-project-@MY_PROJECT_VERSION_API@
-Cflags: -I${includedir}/squash-@MY_PROJECT_VERSION_API@
+Cflags: -I${includedir}/my-project-@MY_PROJECT_VERSION_API@

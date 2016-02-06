@@ -3,6 +3,7 @@
 # Static Library Target: linked against main and against tests.
 
 vala_precompile(MY_PROJECT_C_SOURCES
+    config.vala
 	my_class.vala
 PACKAGES
 	gio-2.0
@@ -36,6 +37,11 @@ configure_file (
     "${CMAKE_CURRENT_BINARY_DIR}/my-project-${MY_PROJECT_VERSION_API}.pc"
     @ONLY)
 
+configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/config.vala.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/config.vala"
+    @ONLY)
+
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/my-project-${MY_PROJECT_VERSION_API}.pc
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
@@ -45,7 +51,8 @@ foreach(file
     ".gitignore"
     "${CMAKE_SHARED_LIBRARY_PREFIX}my-project-${MY_PROJECT_VERSION_API}${CMAKE_SHARED_LIBRARY_SUFFIX}"
     "${CMAKE_STATIC_LIBRARY_PREFIX}my-project-${MY_PROJECT_VERSION_API}${CMAKE_STATIC_LIBRARY_SUFFIX}"
-    "my-project-${MY_PROJECT_VERSION_API}.pc")
+    "my-project-${MY_PROJECT_VERSION_API}.pc"
+    "config.vala")
   file(APPEND ".gitignore" "/${file}\n")
 endforeach(file)
 foreach(file ${MY_PROJECT_C_SOURCES})

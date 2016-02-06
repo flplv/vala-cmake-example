@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/felipe-lavratti/vala-unittests-cmake.svg?branch=master)](https://travis-ci.org/felipe-lavratti/vala-unittests-cmake)
+
 Project Template for *Vala + Unittests + Cmake*
 ===============================================
 

@@ -16,10 +16,6 @@ Atom editor is recommended with the following plugins:
 - language-cmake
 - atom-beautify (file .jsbeautifyrc and .uncrustify.vala.cfg are used to format code)
 
-Improvements Hypothesis
------------------------
-- Add an automatically tests detecting system to fill the CMakeLists.txt.  
-
 Special Thanks
 --------------
 This project uses a few pieces of other projects, thanks to:

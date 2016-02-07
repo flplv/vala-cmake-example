@@ -79,9 +79,6 @@ set(CFLAGS
 )
 add_definitions(${CFLAGS})
 
-# Common Vala flags to use for the project.
-set(MY_PROJECT_VALA_FLAGS "--target-glib=2.32")
-
 # If someone doesn't specify a build type, default to "Debug"
 if(CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE "Debug")

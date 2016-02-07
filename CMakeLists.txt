@@ -46,10 +46,7 @@ include(GNUInstallDirs)
 
 enable_testing()
 
-list(APPEND CMAKE_MODULE_PATH
-    ${CMAKE_SOURCE_DIR}/cmake/vala/
-    ${CMAKE_SOURCE_DIR}/cmake/glib/
-)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 # This creates a "dist" target which will generate a release tarball
 # for your project.
@@ -82,20 +79,19 @@ set(CFLAGS
 )
 add_definitions(${CFLAGS})
 
-# Common Vala flags to use for the project.
-set(MY_PROJECT_VALA_FLAGS "--target-glib=2.32")
-
 # If someone doesn't specify a build type, default to "Debug"
 if(CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE "Debug")
 endif(CMAKE_BUILD_TYPE STREQUAL "")
 
-# Unfortunately, UseVala.cmake doesn't support the standard
-# CMAKE_<LANG>_FLAGS_{DEBUG,RELEASE}, so we'll have to pass these
-# manually later on.
-if (CMAKE_BUILD_TYPE MATCHES "Debug")
-  list(APPEND MY_PROJECT_VALA_FLAGS "--debug")
-endif ()
+list(APPEND CMAKE_VALA_FLAGS "--target-glib=2.32")
+list(APPEND CMAKE_VALA_FLAGS_DEBUG "--debug")
+
+# Lots of perfectly valid Vala code will trigger warnings from the C
+# compiler, almost always false-positives.  This often drowns out
+# legitimate warnings, so we'll try to disable them here.
+include(AddCompilerFlags)
+global_add_compiler_flags(-Wno-incompatible-pointer-types)
 
 set(LIBS
 	${GOBJECT_LIBRARIES}

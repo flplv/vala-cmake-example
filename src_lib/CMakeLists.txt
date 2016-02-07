@@ -75,3 +75,22 @@ configure_file (
     @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/my-project-${MY_PROJECT_VERSION_API}.pc
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+find_package(Valadoc)
+
+if(VALADOC_FOUND)
+    add_custom_target (doc
+        ${VALADOC_EXECUTABLE}
+            -o ${CMAKE_CURRENT_BINARY_DIR}/html
+            ${CMAKE_VALA_FLAGS}
+            --package-name=my-project-${MY_PROJECT_VERSION_API}
+            --package-version="${MY_PROJECT_VERSION_MAJOR}.${MY_PROJECT_VERSION_MINOR}.${MY_PROJECT_VERSION_REVISION}"
+            --doclet=html
+            --pkg=gio-2.0
+            --pkg=gee-0.8
+            --pkg=posix
+            "${CMAKE_CURRENT_BINARY_DIR}/config.vala"
+            my_class.vala
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Generating API documentation with Valadoc" VERBATIM)
+endif()

@@ -24,6 +24,7 @@ before_script:
   - find -name '*.vala' -exec uncrustify -c .uncrustify.vala.cfg --replace {} + || true
   - git diff --exit-code
 script:
-  - ./autogen.sh
-  - make
+  - mkdir build && cd build
+  - cmake .. -DCMAKE_VALA_FLAGS=--fatal-warnings
+  - make VERBOSE=1
   - make test

@@ -46,10 +46,7 @@ include(GNUInstallDirs)
 
 enable_testing()
 
-list(APPEND CMAKE_MODULE_PATH
-    ${CMAKE_SOURCE_DIR}/cmake/vala/
-    ${CMAKE_SOURCE_DIR}/cmake/glib/
-)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 # This creates a "dist" target which will generate a release tarball
 # for your project.

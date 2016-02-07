@@ -9,10 +9,7 @@ PACKAGES
 	gee-0.8
 	posix
 CUSTOM_VAPIS
-	${CMAKE_BINARY_DIR}/src_lib/my-project-${MY_PROJECT_VERSION_API}.vapi
-OPTIONS
-	${MY_PROJECT_VALA_FLAGS}
-)
+	${CMAKE_BINARY_DIR}/src_lib/my-project-${MY_PROJECT_VERSION_API}.vapi)
 
 add_executable(my-project
 	${MY_PROJECT_MAIN_SOURCES}

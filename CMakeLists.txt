@@ -90,12 +90,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE "Debug")
 endif(CMAKE_BUILD_TYPE STREQUAL "")
 
-# Unfortunately, UseVala.cmake doesn't support the standard
-# CMAKE_<LANG>_FLAGS_{DEBUG,RELEASE}, so we'll have to pass these
-# manually later on.
-if (CMAKE_BUILD_TYPE MATCHES "Debug")
-  list(APPEND MY_PROJECT_VALA_FLAGS "--debug")
-endif ()
+list(APPEND CMAKE_VALA_FLAGS "--target-glib=2.32")
+list(APPEND CMAKE_VALA_FLAGS_DEBUG "--debug")
 
 set(LIBS
 	${GOBJECT_LIBRARIES}

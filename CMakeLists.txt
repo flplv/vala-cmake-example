@@ -90,6 +90,12 @@ endif(CMAKE_BUILD_TYPE STREQUAL "")
 list(APPEND CMAKE_VALA_FLAGS "--target-glib=2.32")
 list(APPEND CMAKE_VALA_FLAGS_DEBUG "--debug")
 
+# Lots of perfectly valid Vala code will trigger warnings from the C
+# compiler, almost always false-positives.  This often drowns out
+# legitimate warnings, so we'll try to disable them here.
+include(AddCompilerFlags)
+global_add_compiler_flags(-Wno-incompatible-pointer-types)
+
 set(LIBS
 	${GOBJECT_LIBRARIES}
 	${GIO_LIBRARIES}

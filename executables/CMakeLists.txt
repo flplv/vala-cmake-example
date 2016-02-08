@@ -2,6 +2,7 @@
 #
 # Main target
 
+# Compile Vala sources to C
 vala_precompile(MY_PROJECT_MAIN_SOURCES
 	main.vala
 PACKAGES
@@ -11,16 +12,23 @@ PACKAGES
 CUSTOM_VAPIS
 	${CMAKE_BINARY_DIR}/my-project/my-project-${MY_PROJECT_VERSION_API}.vapi)
 
-add_executable(my-project
+# Tell CMake to create an executable named "my-project"
+add_executable(${PROJECT_NAME}
 	${MY_PROJECT_MAIN_SOURCES}
 )
 
-set_target_properties(my-project PROPERTIES
+# We need to add the directory where the C header for our library is
+# installed, otherwise we'll get an error from the C compiler.
+set_target_properties(${PROJECT_NAME} PROPERTIES
 	INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/my-project)
 
-target_link_libraries(my-project my-project-${MY_PROJECT_VERSION_API} -lm)
+# Any libraries that your tests need to link to should go here.
+# Usually this will just be your library.
+target_link_libraries(${PROJECT_NAME}
+    ${PROJECT_NAME}-${MY_PROJECT_VERSION_API})
 
-install (TARGETS my-project
+# Install the executable.
+install (TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Generate a .gitignore

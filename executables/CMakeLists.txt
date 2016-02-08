@@ -9,14 +9,14 @@ PACKAGES
 	gee-0.8
 	posix
 CUSTOM_VAPIS
-	${CMAKE_BINARY_DIR}/src_lib/my-project-${MY_PROJECT_VERSION_API}.vapi)
+	${CMAKE_BINARY_DIR}/my-project/my-project-${MY_PROJECT_VERSION_API}.vapi)
 
 add_executable(my-project
 	${MY_PROJECT_MAIN_SOURCES}
 )
 
 set_target_properties(my-project PROPERTIES
-	INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/src_lib)
+	INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/my-project)
 
 target_link_libraries(my-project my-project-${MY_PROJECT_VERSION_API} -lm)
 

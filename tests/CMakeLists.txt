@@ -11,12 +11,12 @@ PACKAGES
 	gee-0.8
 	posix
 CUSTOM_VAPIS
-	${CMAKE_BINARY_DIR}/src_lib/my-project-${MY_PROJECT_VERSION_API}.vapi)
+	${CMAKE_BINARY_DIR}/my-project/my-project-${MY_PROJECT_VERSION_API}.vapi)
 
 add_executable(my_project_unit_tests
 	${VALA_UNIT_TESTS_C})
 set_target_properties(my_project_unit_tests PROPERTIES
-	INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/src_lib)
+	INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/my-project)
 target_link_libraries(my_project_unit_tests my-project-${MY_PROJECT_VERSION_API} -lm)
 
 # List of tests in the `my_project_unit_tests' executable that you

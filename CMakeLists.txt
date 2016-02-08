@@ -109,6 +109,6 @@ set(LIB_PATHS
 )
 link_directories(${LIB_PATHS})
 
-add_subdirectory(src_lib)
-add_subdirectory(src_main)
+add_subdirectory(my-project)
+add_subdirectory(executables)
 add_subdirectory(tests)

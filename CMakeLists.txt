@@ -1,6 +1,14 @@
 project("my-project" C)
 cmake_minimum_required(VERSION 3.2)
 
+# Project web site
+set(PROJECT_WEB "https://www.example.com/")
+# Where to report bugs; usually either an e-mail address or an issue
+# tracker URL.
+set(PROJECT_BUGS "https://www.example.com/issues")
+# Gettext package name
+set(GETTEXT_PACKAGE ${PROJECT_NAME})
+
 # Library version
 #
 # This should be incremented with every release.  See semver.org.
@@ -112,3 +120,4 @@ link_directories(${LIB_PATHS})
 add_subdirectory(my-project)
 add_subdirectory(executables)
 add_subdirectory(tests)
+add_subdirectory(po)

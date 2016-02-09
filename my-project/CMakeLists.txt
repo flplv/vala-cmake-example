@@ -74,6 +74,10 @@ add_library(${MY_PROJECT_LIBRARY_NAME}
     SHARED
     ${MY_PROJECT_C_SOURCES})
 
+# Define the gettext domain
+set_property (TARGET ${MY_PROJECT_LIBRARY_NAME}
+    APPEND PROPERTY COMPILE_DEFINITIONS GETTEXT_PACKAGE="${GETTEXT_PACKAGE}")
+
 # If you don't want to build and install a shared library, comment out
 # everything below this point.
 

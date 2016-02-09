@@ -10,6 +10,8 @@ class MyProject {
     } ;
 
     static int main(string[] args) {
+        GLib.Intl.setlocale ();
+
         try {
             var opt_context = new OptionContext ("- My Project") ;
             opt_context.set_help_enabled (true) ;
@@ -28,6 +30,9 @@ class MyProject {
             stdout.printf ("%s\n", Config.PACKAGE_SUFFIX) ;
             return 0 ;
         }
+
+        var foo = new MyClass();
+        foo.foo();
 
         return 0 ;
     }

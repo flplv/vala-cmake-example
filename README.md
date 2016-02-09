@@ -25,9 +25,10 @@ Project-wide features include:
     [atom-beautify](https://atom.io/packages/atom-beautify) plugin
   - Checks in Travis CI to make sure new any changes adhere to the
     specified format.
-- Automatic .gitignore generation
+- Automatic .gitignore generation.
 - Release tarball generation (using
-  [CPack](https://cmake.org/Wiki/CMake:Packaging_With_CPack))
+  [CPack](https://cmake.org/Wiki/CMake:Packaging_With_CPack)).
+- i18n/l10n support via gettext.
 
 There are pervasive comments throughout the template explaining what
 each piece of code does and what your options are.
@@ -90,6 +91,17 @@ and installed.  Like the tests, it links against the library.
 The executable provides a short example of how to use the option
 parser built in to GLib, which you can use to provide a good
 command-line interface for your program.
+
+## Internationalization and Localization
+
+The project includes support for i18n/l10n through gettext.  A full
+tutorial of how to manage gettext translations is outside the scope of
+this document.  Detailed documentation is available from the
+[GNU gettext manual](https://www.gnu.org/software/gettext/manual/index.html),
+or a *brief* introduction can be found on the
+[Wikipedia gettext article](https://en.wikipedia.org/wiki/Gettext).
+
+To (re-)generate the pot file, simply run `make update-pot`.
 
 # Special Thanks
 

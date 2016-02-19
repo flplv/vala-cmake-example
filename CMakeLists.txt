@@ -69,7 +69,6 @@ add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 find_package(GLIB2 REQUIRED)
 
 find_package(Vala "0.30" REQUIRED)
-include(${VALA_USE_FILE})
 
 find_package(PkgConfig)
 pkg_check_modules(GOBJECT REQUIRED gobject-2.0)

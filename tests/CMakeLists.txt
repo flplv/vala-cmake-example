@@ -3,16 +3,13 @@
 # Unit Tests Target
 
 # Compile the Vala code to C
-vala_precompile(VALA_UNIT_TESTS_C
-    test_case.vala
-    test_main.vala
-    test_my_class.vala
-PACKAGES
-    gio-2.0
-    gee-0.8
-    posix
-CUSTOM_VAPIS
-    ${CMAKE_BINARY_DIR}/my-project/my-project-${MY_PROJECT_VERSION_API}.vapi)
+vala_precompile_target(
+  ${CMAKE_BINARY_DIR}/my-project/my-project-${MY_PROJECT_VERSION_API}.vapi
+  test_case.vala
+  test_main.vala
+  test_my_class.vala
+  TARGET test-${PROJECT_NAME}
+  GENERATED_SOURCES VALA_UNIT_TESTS_C)
 
 # Generate an executable called "my_project_unit_tests" to run the tests.
 add_executable(test-${PROJECT_NAME}

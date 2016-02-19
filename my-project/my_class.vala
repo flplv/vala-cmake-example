@@ -1,3 +1,4 @@
+[CCode (gir_namespace = "MyProject", gir_version = "1.0")]
 namespace MyProject {
     public class MyClass : Object {
         public int fooed {

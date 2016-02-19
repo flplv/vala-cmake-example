@@ -3,14 +3,14 @@
 # Main target
 
 # Compile Vala sources to C
-vala_precompile(MY_PROJECT_MAIN_SOURCES
-	main.vala
-PACKAGES
-	gio-2.0
-	gee-0.8
-	posix
-CUSTOM_VAPIS
-	${CMAKE_BINARY_DIR}/my-project/my-project-${MY_PROJECT_VERSION_API}.vapi)
+vala_precompile_target(
+  ${CMAKE_BINARY_DIR}/my-project/my-project-${MY_PROJECT_VERSION_API}.vapi
+  main.vala
+  TARGET ${PROJECT_NAME}
+  GENERATED_SOURCES MY_PROJECT_MAIN_SOURCES
+  PACKAGES
+    gio-2.0
+    gee-0.8)
 
 # Tell CMake to create an executable named "my-project"
 add_executable(${PROJECT_NAME}

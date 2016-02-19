@@ -78,18 +78,22 @@ set_target_properties (${MY_PROJECT_LIBRARY_NAME} PROPERTIES
     VERSION   "${MY_PROJECT_SOVERSION_CURRENT}.${MY_PROJECT_SOVERSION_REVISION}")
 
 # GObject Introspection support
-find_package(GObjectIntrospection)
+find_package(GObjectIntrospection REQUIRED)
 
 # We already had valac write a GIR, now we need to compile it to a
 # typelib.
 gobject_introspection_compile(
-  "${MY_PROJECT_GIR_NAME}.typelib"
-  "${CMAKE_CURRENT_BINARY_DIR}/${MY_PROJECT_GIR_NAME}.gir"
-  ALL)
+  "${CMAKE_CURRENT_BINARY_DIR}/${MY_PROJECT_GIR_NAME}.typelib"
+  "${CMAKE_CURRENT_BINARY_DIR}/${MY_PROJECT_GIR_NAME}.gir")
+
+# Telling CMake you want to install a file doesn't actually get it to
+# *build* that file.  The workaround is to add a custom target which
+# is always built and depens on the file we want to install.
+add_custom_target(typelib ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${MY_PROJECT_GIR_NAME}.typelib")
 
 # Install our typelib
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${MY_PROJECT_GIR_NAME}.typelib"
-    DESTINATION "${GI_REPOSITORY_DIR}")
+    DESTINATION "${GI_TYPELIB_DIR}")
 
 # Install our GIR
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${MY_PROJECT_GIR_NAME}.gir"
@@ -106,7 +110,7 @@ install (TARGETS ${MY_PROJECT_LIBRARY_NAME}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}) # Finally, this is where static libraries (*.a) go
 
 # Install the C header
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MY_PROJECT_HEADER}.h
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MY_PROJECT_PKG_NAME}.h
     DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 
 # Install our VAPI

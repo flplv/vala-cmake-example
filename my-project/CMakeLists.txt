@@ -103,7 +103,6 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MY_PROJECT_PKG_NAME}.pc
 
 # Generate documentation
 find_package(Valadoc)
-include(UseValadoc)
 if(${VALADOC_FOUND})
     valadoc_generate(html
         PACKAGE_NAME ${MY_PROJECT_PKG_NAME}

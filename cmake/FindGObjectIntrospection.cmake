@@ -1,34 +1,18 @@
 # FindGObjectIntrospection.cmake
 # © 2016 Evan Nemerson <evan@nemerson.com>
 
-find_package(PkgConfig REQUIRED)
+find_program(GI_COMPILER_EXECUTABLE g-ir-compiler)
+find_program(GI_SCANNER_EXECUTABLE g-ir-scanner)
 
-pkg_check_modules(GOBJECT_INTROSPECTION gobject-introspection-1.0)
-if(GOBJECT_INTROSPECTION_FOUND2)
-  execute_process(
-    COMMAND ${PKG_CONFIG_EXECUTABLE} "--variable" "g_ir_compiler" "gobject-introspection-1.0"
-    OUTPUT_VARIABLE GI_COMPILER_EXECUTABLE
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process(
-    COMMAND ${PKG_CONFIG_EXECUTABLE} "--variable" "g_ir_scanner" "gobject-introspection-1.0"
-    OUTPUT_VARIABLE GI_SCANNER_EXECUTABLE
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process(
-    COMMAND ${PKG_CONFIG_EXECUTABLE} "--variable" "girdir" "gobject-introspection-1.0"
-    OUTPUT_VARIABLE GI_REPOSITORY_DIR
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process(
-    COMMAND ${PKG_CONFIG_EXECUTABLE} "--variable" "typelibdir" "gobject-introspection-1.0"
-    OUTPUT_VARIABLE GI_TYPELIB_DIR
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process(
-    COMMAND ${PKG_CONFIG_EXECUTABLE} "--modversion" "gobject-introspection-1.0"
-    OUTPUT_VARIABLE GI_COMPILER_VERSION
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(CMAKE_INSTALL_FULL_DATADIR)
+  set(GI_REPOSITORY_DIR "${CMAKE_INSTALL_FULL_DATADIR}/gir-1.0")
 else()
-  find_program(GI_COMPILER_EXECUTABLE g-ir-compiler)
-  find_program(GI_SCANNER_EXECUTABLE g-ir-scanner)
   set(GI_REPOSITORY_DIR "${CMAKE_INSTALL_PREFIX}/share/gir-1.0")
+endif()
+
+if(CMAKE_INSTALL_FULL_LIBDIR)
+  set(GI_TYPELIB_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/girepository-1.0")
+else()
   set(GI_TYPELIB_DIR "${CMAKE_INSTALL_LIBDIR}/girepository-1.0")
 endif()
 
@@ -36,8 +20,7 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GObjectIntrospection
   REQUIRED_VARS
     GI_COMPILER_EXECUTABLE
-  VERSION_VAR
-    GI_VERSION)
+    GI_SCANNER_EXECUTABLE)
 
 function(gobject_introspection_compile TYPELIB)
   set (options DEBUG VERBOSE)
@@ -48,7 +31,8 @@ function(gobject_introspection_compile TYPELIB)
   unset (oneValueArgs)
   unset (multiValueArgs)
 
-  get_filename_component(TYPELIB "${TYPELIB}" ABSOLUTE)
+  get_filename_component(TYPELIB "${TYPELIB}" ABSOLUTE
+    BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
   if(GI_COMPILER_DEBUG)
     list(APPEND GI_COMPILER_FLAGS "--debug")

@@ -22,10 +22,10 @@ namespace MyProject {
                 return 1;
             }
 
-            if( version ){
+            if (version) {
                 stdout.printf ("My Project %s\n", Config.BUILD_VERSION);
                 return 0;
-            } else if( api_version ){
+            } else if (api_version) {
                 stdout.printf ("%s\n", Config.PACKAGE_SUFFIX);
                 return 0;
             }
@@ -35,6 +35,5 @@ namespace MyProject {
 
             return 0;
         }
-
     }
 }

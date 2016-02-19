@@ -78,6 +78,5 @@ public abstract class TestCase : Object {
         public void tear_down (void* fixture) {
             this.test_case.tear_down ();
         }
-
     }
 }

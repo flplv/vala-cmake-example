@@ -17,5 +17,4 @@ public class MyClassTest : TestCase {
         this.cut.foo_silent ();
         assert (this.cut.fooed == 1);
     }
-
 }

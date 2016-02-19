@@ -13,6 +13,5 @@ namespace MyProject {
         public void foo_silent () {
             this.fooed++;
         }
-
     }
 }

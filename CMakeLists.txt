@@ -116,6 +116,29 @@ set(LIB_PATHS
 )
 link_directories(${LIB_PATHS})
 
+# The name of the shared library.  Note that a "lib" prefix will be
+# added automatically on systems where that is the convention.
+set(MY_PROJECT_LIBRARY_NAME ${PROJECT_NAME}-${MY_PROJECT_VERSION_API})
+
+# The name of the VAPI to generate, which also needs to be the
+# pkg-config name.  It's often a good idea to make this the same as
+# your shared library name, but not required.  For example, if your
+# project is called "libfoo" you should have your library be named
+# "foo", but use "libfoo" for the package name.
+#
+# For our example, we'll use the project name (which we set at the
+# beginning of the top level CMakeLists.txt.
+set(MY_PROJECT_PKG_NAME ${PROJECT_NAME}-${MY_PROJECT_VERSION_API})
+
+# Name of the GObject Introspection repository for the library.
+set(MY_PROJECT_GIR_NAME "MyProject-${MY_PROJECT_VERSION_API}")
+
+# The name of the C header, without the trailing ".h"
+set(MY_PROJECT_HEADER ${PROJECT_NAME})
+
+# The path where libraries files should be searched for
+set (LIBRARY_PATH "my-project")
+
 add_subdirectory(my-project)
 add_subdirectory(executables)
 add_subdirectory(tests)

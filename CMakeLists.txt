@@ -133,9 +133,6 @@ set(MY_PROJECT_PKG_NAME ${PROJECT_NAME}-${MY_PROJECT_VERSION_API})
 # Name of the GObject Introspection repository for the library.
 set(MY_PROJECT_GIR_NAME "MyProject-${MY_PROJECT_VERSION_API}")
 
-# The name of the C header, without the trailing ".h"
-set(MY_PROJECT_HEADER ${PROJECT_NAME})
-
 # The path where libraries files should be searched for
 set (LIBRARY_PATH "my-project")
 

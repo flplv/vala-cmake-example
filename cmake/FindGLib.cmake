@@ -5,11 +5,11 @@
 
 find_package(PkgConfig)
 
-# if(PKG_CONFIG_FOUND)
-#   pkg_search_module(GLIB_PKG    glib-2.0)
-#   pkg_search_module(GOBJECT_PKG gobject-2.0)
-#   pkg_search_module(GIO_PKG     gio-2.0)
-# endif()
+if(PKG_CONFIG_FOUND)
+  pkg_search_module(GLIB_PKG    glib-2.0)
+  pkg_search_module(GOBJECT_PKG gobject-2.0)
+  pkg_search_module(GIO_PKG     gio-2.0)
+endif()
 
 find_library(GLIB    glib-2.0    HINTS ${GLIB_PKG_LIBRARY_DIRS})
 find_library(GOBJECT gobject-2.0 HINTS ${GOBJECT_PKG_LIBRARY_DIRS})

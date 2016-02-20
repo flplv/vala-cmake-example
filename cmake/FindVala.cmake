@@ -152,8 +152,9 @@ endmacro()
 #     file name here.
 #   FLAGS …
 #     List of flags you wish to pass to valac.  They will be added to
-#     the flags in CMAKE_VALA_FLAGS and CMAKE_VALA_DEBUG_FLAGS (for
-#     Debug builds) or CMAKE_VALA_RELEASE_FLAGS (for Release builds).
+#     the flags in VALA_COMPILER_FLAGS and VALA_COMPILER_FLAGS_DEBUG
+#     (for Debug builds) or VALA_COMPILER_FLAGS_RELEASE (for Release
+#     builds).
 #   PACKAGES
 #     List of dependencies to pass to valac.
 #   DEPENDS
@@ -221,11 +222,11 @@ macro(vala_precompile_target TARGET GENERATED_SOURCES)
   foreach(pkg ${VALAC_PACKAGES})
     list(APPEND VALAFLAGS "--pkg" "${pkg}")
   endforeach()
-  list(APPEND VALAFLAGS ${CMAKE_VALA_FLAGS})
+  list(APPEND VALAFLAGS ${VALA_COMPILER_FLAGS})
   if (CMAKE_BUILD_TYPE MATCHES "Debug")
-    list(APPEND VALAFLAGS ${CMAKE_VALA_FLAGS_DEBUG})
+    list(APPEND VALAFLAGS ${VALA_COMPILER_FLAGS_DEBUG})
   elseif(CMAKE_BUILD_TYPE MATCHES "Release")
-    list(APPEND VALAFLAGS ${CMAKE_VALA_FLAGS_RELEASE})
+    list(APPEND VALAFLAGS ${VALA_COMPILER_FLAGS_RELEASE})
   endif()
 
   # Where to put the output

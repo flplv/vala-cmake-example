@@ -90,8 +90,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE "Debug")
 endif(CMAKE_BUILD_TYPE STREQUAL "")
 
-list(APPEND CMAKE_VALA_FLAGS "--target-glib=2.32")
-list(APPEND CMAKE_VALA_FLAGS_DEBUG "--debug")
+list(APPEND VALA_COMPILER_FLAGS "--target-glib=2.32")
+list(APPEND VALA_COMPILER_FLAGs_DEBUG "--debug")
 
 # Lots of perfectly valid Vala code will trigger warnings from the C
 # compiler, almost always false-positives.  This often drowns out

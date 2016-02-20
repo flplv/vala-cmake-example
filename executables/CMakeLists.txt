@@ -4,10 +4,11 @@
 
 # Compile Vala sources to C
 vala_precompile_target(
+  ${PROJECT_NAME}
+  MY_PROJECT_MAIN_SOURCES
   ${CMAKE_BINARY_DIR}/my-project/my-project-${MY_PROJECT_VERSION_API}.vapi
   main.vala
-  TARGET ${PROJECT_NAME}
-  GENERATED_SOURCES MY_PROJECT_MAIN_SOURCES)
+  DEPENDS "${MY_PROJECT_LIBRARY_NAME}-vala")
 
 # Tell CMake to create an executable named "my-project"
 add_executable(${PROJECT_NAME}

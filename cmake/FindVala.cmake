@@ -104,17 +104,42 @@ macro(_vala_parse_source_file_path source)
 #  message(FATAL_ERROR "Source: ${source}")
 endmacro()
 
-# vala_precompile_target
+# vala_precompile_target(
+#   TARGET
+#   GENERATED_SOURCES
+#   SOURCES…
+#   [VAPI vapi-name.vapi]
+#   [GIR name-version.gir]
+#   [HEADER name.h]
+#   [FLAGS …]
+#   [PACKAGES …]
+#   [DEPENDS …])
+#
+# This function will use valac to generate C code.
+#
+# This function uses fast VAPIs to help improve parallelization and
+# incremental build times.  The problem with this is that CMake
+# doesn't allow file-level dependencies across directories; if you're
+# generating code in one directory (for example, a library) and would
+# like to use it in another directory and are building in parallel,
+# the build can fail.  To prevent this, this function will create a
+# ${TARGET}-vala top-level target (which *is* usable from other
+# directories).
 #
 # Options:
 #
-#   TARGET target
-#     Name of the target you're generated; it's generally best to make
+#   TARGET
+#     Name of the target you're generating; it's generally best to make
 #     this the same as your executable or library target name, but not
 #     technically required.
-#   GENERATED_SOURCES varname
+#   GENERATED_SOURCES
 #     Variable in which to store the list of generated sources (which
 #     you should pass to add_executable or add_library).
+#   SOURCES
+#     Vala sources to generate C from.  You should include *.vala,
+#     *.gs, and uninstalled *.vapi files here; you may also include
+#     C/C++ sources (they will simply be passed directly through to
+#     the GENERATED_SOURCES variable).
 #   VAPI name.vapi
 #     If you would like to have valac generate a VAPI (basically, if
 #     you are generating a library not an executable), pass the file
@@ -131,10 +156,12 @@ endmacro()
 #     Debug builds) or CMAKE_VALA_RELEASE_FLAGS (for Release builds).
 #   PACKAGES
 #     List of dependencies to pass to valac.
-macro(vala_precompile_target)
+#   DEPENDS
+#     Any additional dependencies you would like.
+macro(vala_precompile_target TARGET GENERATED_SOURCES)
   set (options)
-  set (oneValueArgs TARGET GENERATED_SOURCES VAPI GIR HEADER)
-  set (multiValueArgs FLAGS PACKAGES)
+  set (oneValueArgs VAPI GIR HEADER)
+  set (multiValueArgs FLAGS PACKAGES DEPENDS)
   cmake_parse_arguments(VALAC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   unset (options)
   unset (oneValueArgs)
@@ -143,6 +170,24 @@ macro(vala_precompile_target)
   set(VALA_SOURCES)
   set(VALA_VAPIS)
   set(VALA_OUTPUT_SOURCES)
+
+  if(VALAC_VAPI)
+    list(APPEND non_source_out_files "${VALAC_VAPI}")
+    list(APPEND non_source_valac_args "--vapi" "${VALAC_VAPI}")
+  endif()
+
+  if(VALAC_GIR)
+    list(APPEND non_source_out_files "${VALAC_GIR}")
+    list(APPEND non_source_valac_args
+      "--gir" "${VALAC_GIR}"
+      "--library" "${TARGET}"
+      "--shared-library" "${CMAKE_SHARED_LIBRARY_PREFIX}${TARGET}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+  endif()
+
+  if(VALAC_HEADER)
+    list(APPEND non_source_out_files "${VALAC_HEADER}")
+    list(APPEND non_source_valac_args --header "${VALAC_HEADER}")
+  endif()
 
   # Split up the input files into three lists; one containing vala and
   # genie sources, one containing VAPIs, and one containing C files
@@ -184,7 +229,7 @@ macro(vala_precompile_target)
   endif()
 
   # Where to put the output
-  set(TARGET_DIR "${CMAKE_CURRENT_BINARY_DIR}/${VALAC_TARGET}-vala")
+  set(TARGET_DIR "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}-vala")
 
   set(FAST_VAPI_STAMPS)
 
@@ -200,7 +245,10 @@ macro(vala_precompile_target)
     add_custom_command(
       OUTPUT "${TARGET_DIR}/${output_path}.vapi-stamp"
       BYPRODUCTS "${TARGET_DIR}/${output_path}.vapi"
-      DEPENDS "${source}"
+      DEPENDS
+        "${source}"
+        ${VALA_VAPIS}
+        ${VALAC_DEPENDS}
       COMMAND "${VALA_EXECUTABLE}"
       ARGS
         "${source}"
@@ -219,9 +267,11 @@ macro(vala_precompile_target)
   add_custom_command(
     OUTPUT "${TARGET_DIR}/fast-vapis.stamp"
     COMMAND "${CMAKE_COMMAND}" ARGS -E touch "${TARGET_DIR}/fast-vapis.stamp"
-    DEPENDS ${FAST_VAPI_STAMPS})
+    DEPENDS
+      ${FAST_VAPI_STAMPS}
+      ${VALAC_DEPENDS})
 
-  add_custom_target("${VALAC_TARGET}-fast-vapis"
+  add_custom_target("${TARGET}-fast-vapis"
     DEPENDS "${TARGET_DIR}/fast-vapis.stamp")
 
   # Add targets to generate C sources
@@ -253,7 +303,8 @@ macro(vala_precompile_target)
         ${VALAFLAGS}
         ${use_fast_vapi_flags}
       DEPENDS
-        "${VALAC_TARGET}-fast-vapis")
+        "${TARGET}-fast-vapis"
+        ${VALA_VAPIS})
     unset(use_fast_vapi_flags)
 
     list(APPEND VALA_OUTPUT_SOURCES "${TARGET_DIR}/${generated_source}")
@@ -263,27 +314,7 @@ macro(vala_precompile_target)
     unset(generated_source)
   endforeach()
 
-  if(VALAC_GENERATED_SOURCES)
-    set("${VALAC_GENERATED_SOURCES}" ${VALA_OUTPUT_SOURCES})
-  endif()
-
-  if(VALAC_VAPI)
-    list(APPEND non_source_out_files "${VALAC_VAPI}")
-    list(APPEND non_source_valac_args "--vapi" "${VALAC_VAPI}")
-  endif()
-
-  if(VALAC_GIR)
-    list(APPEND non_source_out_files "${VALAC_GIR}")
-    list(APPEND non_source_valac_args
-      "--gir" "${VALAC_GIR}"
-      "--library" "${VALAC_TARGET}"
-      "--shared-library" "${CMAKE_SHARED_LIBRARY_PREFIX}${VALAC_TARGET}${CMAKE_SHARED_LIBRARY_SUFFIX}")
-  endif()
-
-  if(VALAC_HEADER)
-    list(APPEND non_source_out_files "${VALAC_HEADER}")
-    list(APPEND non_source_valac_args "--header" "${VALAC_HEADER}")
-  endif()
+  set("${GENERATED_SOURCES}" ${VALA_OUTPUT_SOURCES})
 
   if(non_source_out_files)
     set(use_fast_vapi_flags)
@@ -304,9 +335,17 @@ macro(vala_precompile_target)
         ${VALAFLAGS}
         ${use_fast_vapi_flags}
       DEPENDS
-        "${VALAC_TARGET}-fast-vapis")
+        "${TARGET}-fast-vapis"
+        ${VALA_VAPIS})
     unset(use_fast_vapi_flags)
   endif()
+
+  # CMake doesn't allow file-level dependencies across directories, so
+  # we provide a target we can depend on from other directories.
+  add_custom_target("${TARGET}-vala"
+    DEPENDS
+      ${non_source_out_files}
+      ${VALAC_DEPENDS})
 
   unset(non_source_out_files)
   unset(non_source_valac_args)

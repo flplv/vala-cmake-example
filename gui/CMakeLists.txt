@@ -11,12 +11,12 @@ pkg_check_modules(GTK REQUIRED gtk+-3.0)
 
 # Compile Vala sources to C
 vala_precompile_target(
+  "${MY_PROJECT_GUI_NAME}"
+  MY_PROJECT_GUI_SOURCES
   ${CMAKE_BINARY_DIR}/my-project/my-project-${MY_PROJECT_VERSION_API}.vapi
   gui.vala
-  TARGET "${MY_PROJECT_GUI_NAME}"
-  GENERATED_SOURCES MY_PROJECT_GUI_SOURCES
-  PACKAGES
-    gtk+-3.0)
+  PACKAGES gtk+-3.0
+  DEPENDS "${MY_PROJECT_LIBRARY_NAME}-vala")
 
 # Compile resources to C sources
 glib_compile_resources("resources/resources.gresource.xml"

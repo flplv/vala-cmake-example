@@ -16,7 +16,6 @@ find_library(GOBJECT gobject-2.0 HINTS ${GOBJECT_PKG_LIBRARY_DIRS})
 find_library(GIO     gio-2.0     HINTS ${GIO_PKG_LIBRARY_DIRS})
 
 if(GLIB)
-  set(GLIB_FOUND 1)
   add_library(glib-2.0 SHARED IMPORTED)
   set_property(TARGET glib-2.0 PROPERTY IMPORTED_LOCATION "${GLIB}")
 
@@ -52,12 +51,9 @@ if(GLIB)
 
     list(APPEND GLIB_INCLUDE_DIRS ${GLIB_CONFIG_INCLUDE_DIR})
   endif()
-else()
-  unset(GLIB_FOUND)
 endif()
 
 if(GOBJECT)
-  set(GOBJECT_FOUND 1)
   add_library(gobject-2.0 SHARED IMPORTED)
   set_property(TARGET gobject-2.0 PROPERTY IMPORTED_LOCATION "${GOBJECT}")
 
@@ -68,12 +64,9 @@ if(GOBJECT)
     list(APPEND GOBJECT_INCLUDE_DIRS ${GLIB_INCLUDE_DIRS})
     list(REMOVE_DUPLICATES GOBJECT_INCLUDE_DIRS)
   endif()
-else()
-  unset(GOBJECT_FOUND)
 endif()
 
 if(GIO)
-  set(GIO_FOUND 1)
   add_library(gio-2.0 SHARED IMPORTED)
   set_property(TARGET gio-2.0 PROPERTY IMPORTED_LOCATION "${GIO}")
 
@@ -84,8 +77,6 @@ if(GIO)
     list(APPEND GIO_INCLUDE_DIRS ${GOBJECT_INCLUDE_DIRS})
     list(REMOVE_DUPLICATES GIO_INCLUDE_DIRS)
   endif()
-else()
-  unset(GIO_FOUND)
 endif()
 
 find_program(GLIB_GENMARSHAL glib-genmarshal)
@@ -184,11 +175,8 @@ endif()
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GLib
     REQUIRED_VARS
-      GLIB_FOUND
       GLIB_INCLUDE_DIRS
-      GOBJECT_FOUND
       GOBJECT_INCLUDE_DIRS
-      GIO_FOUND
       GIO_INCLUDE_DIRS
       GLIB_MKENUMS
       GLIB_GENMARSHAL

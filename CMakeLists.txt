@@ -66,8 +66,7 @@ set(CPACK_SOURCE_IGNORE_FILES
 include(CPack)
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
-find_package(GLIB2 REQUIRED)
-
+find_package(GLib "2.32" REQUIRED)
 find_package(Vala "0.30" REQUIRED)
 
 find_package(PkgConfig)
@@ -138,5 +137,6 @@ set (LIBRARY_PATH "my-project")
 
 add_subdirectory(my-project)
 add_subdirectory(executables)
+add_subdirectory(gui)
 add_subdirectory(tests)
 add_subdirectory(po)

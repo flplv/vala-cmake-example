@@ -22,61 +22,61 @@
 
 public abstract class TestCase : Object {
 
-    private GLib.TestSuite suite ;
-    private Adaptor[] adaptors = new Adaptor[0] ;
+    private GLib.TestSuite suite;
+    private Adaptor[] adaptors = new Adaptor[0];
 
-    public delegate void TestMethod() ;
+    public delegate void TestMethod ();
 
     public TestCase (string name) {
-        this.suite = new GLib.TestSuite (name) ;
+        this.suite = new GLib.TestSuite (name);
     }
 
-    public void add_test(string name, owned TestMethod test) {
-        var adaptor = new Adaptor (name, (owned) test, this) ;
-        this.adaptors += adaptor ;
+    public void add_test (string name, owned TestMethod test) {
+        var adaptor = new Adaptor (name, (owned) test, this);
+        this.adaptors += adaptor;
 
-        /* We are getting a warning here. No way to get around this. */
         this.suite.add (new GLib.TestCase (adaptor.name,
-                                           adaptor.setup,
+                                           adaptor.set_up,
                                            adaptor.run,
-                                           adaptor.teardown)) ;
+                                           adaptor.tear_down));
     }
 
-    public virtual void setup() {
+    public virtual void set_up () {
     }
 
-    public virtual void teardown() {
+    public virtual void tear_down () {
     }
 
-    public GLib.TestSuite get_suite() {
-        return this.suite ;
+    public GLib.TestSuite get_suite () {
+        return this.suite;
     }
 
     private class Adaptor {
-
-        public string name { get ; private set ; }
-        private TestMethod test ;
-        private TestCase test_case ;
+        [CCode (notify = false)]
+        public string name {
+            get; private set;
+        }
+        private TestMethod test;
+        private TestCase test_case;
 
         public Adaptor (string name,
                         owned TestMethod test,
                         TestCase test_case) {
-            this.name = name ;
-            this.test = (owned) test ;
-            this.test_case = test_case ;
+            this.name = name;
+            this.test = (owned) test;
+            this.test_case = test_case;
         }
 
-        public void setup(void * fixture) {
-            this.test_case.setup () ;
+        public void set_up (void* fixture) {
+            this.test_case.set_up ();
         }
 
-        public void run(void * fixture) {
-            this.test () ;
+        public void run (void* fixture) {
+            this.test ();
         }
 
-        public void teardown(void * fixture) {
-            this.test_case.teardown () ;
+        public void tear_down (void* fixture) {
+            this.test_case.tear_down ();
         }
-
     }
 }

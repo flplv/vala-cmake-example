@@ -1,6 +1,14 @@
 project("my-project" C)
 cmake_minimum_required(VERSION 3.2)
 
+# Project web site
+set(PROJECT_WEB "https://www.example.com/")
+# Where to report bugs; usually either an e-mail address or an issue
+# tracker URL.
+set(PROJECT_BUGS "https://www.example.com/issues")
+# Gettext package name
+set(GETTEXT_PACKAGE ${PROJECT_NAME})
+
 # Library version
 #
 # This should be incremented with every release.  See semver.org.
@@ -58,10 +66,8 @@ set(CPACK_SOURCE_IGNORE_FILES
 include(CPack)
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
-find_package(GLIB2 REQUIRED)
-
+find_package(GLib "2.32" REQUIRED)
 find_package(Vala "0.30" REQUIRED)
-include(${VALA_USE_FILE})
 
 find_package(PkgConfig)
 pkg_check_modules(GOBJECT REQUIRED gobject-2.0)
@@ -84,8 +90,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE "Debug")
 endif(CMAKE_BUILD_TYPE STREQUAL "")
 
-list(APPEND CMAKE_VALA_FLAGS "--target-glib=2.32")
-list(APPEND CMAKE_VALA_FLAGS_DEBUG "--debug")
+list(APPEND VALA_COMPILER_FLAGS "--target-glib=2.32")
+list(APPEND VALA_COMPILER_FLAGs_DEBUG "--debug")
 
 # Lots of perfectly valid Vala code will trigger warnings from the C
 # compiler, almost always false-positives.  This often drowns out
@@ -109,7 +115,6 @@ set(LIB_PATHS
 )
 link_directories(${LIB_PATHS})
 
-
 # The name of the shared library.  Note that a "lib" prefix will be
 # added automatically on systems where that is the convention.
 set(MY_PROJECT_LIBRARY_NAME ${PROJECT_NAME}-${MY_PROJECT_VERSION_API})
@@ -124,12 +129,14 @@ set(MY_PROJECT_LIBRARY_NAME ${PROJECT_NAME}-${MY_PROJECT_VERSION_API})
 # beginning of the top level CMakeLists.txt.
 set(MY_PROJECT_PKG_NAME ${PROJECT_NAME}-${MY_PROJECT_VERSION_API})
 
-# The name of the C header, without the trailing ".h"
-set(MY_PROJECT_HEADER ${PROJECT_NAME})
+# Name of the GObject Introspection repository for the library.
+set(MY_PROJECT_GIR_NAME "MyProject-${MY_PROJECT_VERSION_API}")
 
 # The path where libraries files should be searched for
-set (LIBRAR_PATH "src_lib")
+set (LIBRARY_PATH "my-project")
 
-add_subdirectory(src_lib)
-add_subdirectory(src_main)
+add_subdirectory(my-project)
+add_subdirectory(executables)
+add_subdirectory(gui)
 add_subdirectory(tests)
+add_subdirectory(po)

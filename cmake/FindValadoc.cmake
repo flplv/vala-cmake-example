@@ -54,10 +54,8 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(Valadoc
 #     List of dependencies to pass to valac.
 #   DOCLET doclet-name
 #     Name of the doclet to use (default: html)
-#   ALL
-#     Set if you always want the documentation to be generated.
 function(valadoc_generate OUTPUT_DIR)
-  set (options ALL)
+  set (options)
   set (oneValueArgs DOCLET PACKAGE_NAME PACKAGE_VERSION)
   set (multiValueArgs SOURCES PACKAGES FLAGS DEFINITIONS CUSTOM_VAPIS)
   cmake_parse_arguments(VALADOC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -95,10 +93,4 @@ function(valadoc_generate OUTPUT_DIR)
       ${VALADOC_SOURCES}
     COMMENT "Generating documentation with Valadoc"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
-
-  if(NOT ${VALADOC_ALL})
-    add_custom_target(doc DEPENDS "${OUTPUT_DIR}")
-  else()
-    add_custom_target(doc ALL DEPENDS "${OUTPUT_DIR}")
-  endif()
 endfunction()

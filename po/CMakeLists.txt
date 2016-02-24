@@ -13,7 +13,9 @@ file(GLOB gettext_source_files
     ${CMAKE_SOURCE_DIR}/my-project/*.vala
     ${CMAKE_SOURCE_DIR}/my-project/*.c
     ${CMAKE_SOURCE_DIR}/executables/*.vala
-    ${CMAKE_SOURCE_DIR}/executables/*.c)
+    ${CMAKE_SOURCE_DIR}/executables/*.c
+    ${CMAKE_SOURCE_DIR}/gui/*.vala
+    ${CMAKE_SOURCE_DIR}/gui/resources/*.ui)
 
 # Create an "update-pot" target.  This will scan the sources and
 # update the list of translatable strings.  Note that this will output

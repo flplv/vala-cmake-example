@@ -1,5 +1,5 @@
 namespace MyProject.GUI {
-    class Application : Gtk.Application {
+    private class Application : Gtk.Application {
         protected override void activate () {
             Gtk.Builder builder = new Gtk.Builder ();
             try {
@@ -11,6 +11,9 @@ namespace MyProject.GUI {
             Gtk.ApplicationWindow window = builder.get_object ("main-window") as Gtk.ApplicationWindow;
             if (window == null)
                 GLib.error ("Unable to load main window");
+
+            GLib.Settings settings = new GLib.Settings ("com.github.felipe-lavratti.vala-unittests-cmake");
+            settings.bind ("active", builder.get_object ("toggle-button"), "active", GLib.SettingsBindFlags.DEFAULT);
 
             window.application = this;
             window.show ();

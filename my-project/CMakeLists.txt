@@ -140,7 +140,7 @@ if(${VALADOC_FOUND})
         SOURCES ${MY_PROJECT_VALA_SOURCES}
         PACKAGES ${MY_PROJECT_VALA_PACKAGES})
 
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/devhelp/${MY_PROJECT_PKG_NAME}"
+    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/devhelp/${MY_PROJECT_PKG_NAME}"
         DESTINATION "${CMAKE_INSTALL_DATADIR}/devhelp/books")
     add_custom_target(doc ALL
         DEPENDS html devhelp)

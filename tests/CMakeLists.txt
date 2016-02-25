@@ -29,6 +29,8 @@ set (TEST_EXECUTABLE_NAME ${PROJECT_NAME}_unit_tests)
 add_executable(${PROJECT_NAME}_unit_tests
     ${MY_PROJECT_C_TEST_SOURCES})
 
+add_dependencies("${PROJECT_NAME}_unit_tests" "test-${PROJECT_NAME}-vala")
+
 set_target_properties(${TEST_EXECUTABLE_NAME} PROPERTIES
 	INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/${LIBRARY_PATH})
 

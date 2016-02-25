@@ -25,10 +25,14 @@ glib_compile_resources("resources/resources.gresource.xml"
   C_NAME "my_project_gui_resources"
   INTERNAL)
 
-# Tell CMake to create an executable named "my-project"
+# Tell CMake to create an executable named "${MY_PROJECT_GUI_NAME}"
 add_executable("${MY_PROJECT_GUI_NAME}"
     ${MY_PROJECT_GUI_SOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/gui-resources.c")
+
+# Make sure the Vala sources are compiled to C before attempting to
+# build the executable.
+add_dependencies("${MY_PROJECT_GUI_NAME}" "${MY_PROJECT_GUI_NAME}-vala")
 
 # Link to libraries
 target_link_libraries(${MY_PROJECT_GUI_NAME}

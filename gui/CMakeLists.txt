@@ -11,7 +11,7 @@ pkg_check_modules(GTK REQUIRED gtk+-3.0)
 
 # Compile Vala sources to C
 vala_precompile_target(
-  "${MY_PROJECT_GUI_NAME}"
+  "${MY_PROJECT_GUI_NAME}-vala"
   MY_PROJECT_GUI_SOURCES
   ${CMAKE_BINARY_DIR}/my-project/my-project-${MY_PROJECT_VERSION_API}.vapi
   gui.vala

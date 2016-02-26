@@ -4,7 +4,7 @@
 
 # Compile Vala sources to C
 vala_precompile_target(
-  ${PROJECT_NAME}
+  "${PROJECT_NAME}-vala"
   MY_PROJECT_MAIN_SOURCES
   ${CMAKE_BINARY_DIR}/my-project/my-project-${MY_PROJECT_VERSION_API}.vapi
   main.vala

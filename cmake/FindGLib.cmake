@@ -1,7 +1,31 @@
 # FindGLib.cmake
-# © 2016 Evan Nemerson <evan@nemerson.com>
+# <https://github.com/nemequ/gnome-cmake>
 #
 # CMake support for GLib/GObject/GIO.
+#
+# License:
+#
+#   Copyright (c) 2016 Evan Nemerson <evan@nemerson.com>
+#
+#   Permission is hereby granted, free of charge, to any person
+#   obtaining a copy of this software and associated documentation
+#   files (the "Software"), to deal in the Software without
+#   restriction, including without limitation the rights to use, copy,
+#   modify, merge, publish, distribute, sublicense, and/or sell copies
+#   of the Software, and to permit persons to whom the Software is
+#   furnished to do so, subject to the following conditions:
+#
+#   The above copyright notice and this permission notice shall be
+#   included in all copies or substantial portions of the Software.
+#
+#   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+#   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+#   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#   DEALINGS IN THE SOFTWARE.
 
 find_package(PkgConfig)
 
@@ -97,6 +121,50 @@ if(GLIB_COMPILE_SCHEMAS)
   set_property(TARGET glib-compile-schemas PROPERTY IMPORTED_LOCATION "${GLIB_COMPILE_SCHEMAS}")
 endif()
 
+# glib_install_schemas(
+#   [DESTINATION directory]
+#   schemas…)
+#
+# Validate and install the listed schemas.
+function(glib_install_schemas)
+  set (options)
+  set (oneValueArgs DESTINATION)
+  set (multiValueArgs)
+  cmake_parse_arguments(GSCHEMA "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  unset (options)
+  unset (oneValueArgs)
+  unset (multiValueArgs)
+
+  foreach(schema ${GSCHEMA_UNPARSED_ARGUMENTS})
+    get_filename_component(schema_name "${schema}" NAME)
+    string(REGEX REPLACE "^(.+)\.gschema.xml$" "\\1" schema_name "${schema_name}")
+    set(schema_output "${CMAKE_CURRENT_BINARY_DIR}/${schema_name}.gschema.xml.valid")
+
+    add_custom_command(
+      OUTPUT "${schema_output}"
+      COMMAND glib-compile-schemas
+        --strict
+        --dry-run
+        --schema-file="${schema}"
+      COMMAND "${CMAKE_COMMAND}" ARGS -E touch "${schema_output}"
+      DEPENDS "${schema}"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+      COMMENT "Validating ${schema}")
+
+    add_custom_target("gsettings-schema-${schema_name}" ALL
+      DEPENDS "${schema_output}")
+
+    if(CMAKE_INSTALL_FULL_DATADIR)
+      set(SCHEMADIR "${CMAKE_INSTALL_FULL_DATADIR}/glib-2.0/schemas")
+    else()
+      set(SCHEMADIR "${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas")
+    endif()
+    install(FILES "${schema}"
+      DESTINATION "${SCHEMADIR}")
+    install(CODE "execute_process(COMMAND \"${GLIB_COMPILE_SCHEMAS}\" \"${SCHEMADIR}\")")
+  endforeach()
+endfunction()
+
 find_program(GLIB_COMPILE_RESOURCES glib-compile-resources)
 if(GLIB_COMPILE_RESOURCES)
   add_executable(glib-compile-resources IMPORTED)
@@ -113,7 +181,7 @@ function(glib_compile_resources SPEC_FILE)
   unset (multiValueArgs)
 
   if(NOT GLIB_COMPILE_RESOURCES_SOURCE_DIR)
-    set(GLIB_COMPILE_RESOURCES_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+    set(GLIB_COMPILE_RESOURCES_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
   endif()
 
   set(FLAGS)
@@ -148,6 +216,7 @@ function(glib_compile_resources SPEC_FILE)
         --target "${GLIB_COMPILE_RESOURCES_HEADER}"
         ${FLAGS}
         "${SPEC_FILE}"
+      DEPENDS "${SPEC_FILE}" ${deps}
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
   endif()
 
@@ -162,6 +231,7 @@ function(glib_compile_resources SPEC_FILE)
         --target "${GLIB_COMPILE_RESOURCES_SOURCE}"
         ${FLAGS}
         "${SPEC_FILE}"
+      DEPENDS "${SPEC_FILE}" ${deps}
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
   endif()
 endfunction()

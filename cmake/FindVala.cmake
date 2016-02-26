@@ -1,5 +1,5 @@
 # FindVala.cmake
-# © 2016 Evan Nemerson <evan@nemerson.com>
+# <https://github.com/nemequ/gnome-cmake>
 #
 # This file contains functions which can be used to integrate Vala
 # compilation with CMake.  It is intended as a replacement for Jakob
@@ -7,6 +7,30 @@
 # faster parallel compilation, and per-target directories for
 # generated sources to allow reusing source files across, even with
 # different options.
+#
+# License:
+#
+#   Copyright (c) 2016 Evan Nemerson <evan@nemerson.com>
+#
+#   Permission is hereby granted, free of charge, to any person
+#   obtaining a copy of this software and associated documentation
+#   files (the "Software"), to deal in the Software without
+#   restriction, including without limitation the rights to use, copy,
+#   modify, merge, publish, distribute, sublicense, and/or sell copies
+#   of the Software, and to permit persons to whom the Software is
+#   furnished to do so, subject to the following conditions:
+#
+#   The above copyright notice and this permission notice shall be
+#   included in all copies or substantial portions of the Software.
+#
+#   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+#   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+#   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#   DEALINGS IN THE SOFTWARE.
 
 set(VALAC_NAMES valac)
 
@@ -28,11 +52,14 @@ mark_as_advanced(VALA_EXECUTABLE)
 
 unset(VALAC_NAMES)
 
-# Determine the valac version
 if(VALA_EXECUTABLE)
+  # Determine valac version
   execute_process(COMMAND ${VALA_EXECUTABLE} "--version"
     OUTPUT_VARIABLE VALA_VERSION)
   string(REGEX REPLACE "^.*Vala ([0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+(\\-[0-9a-f]+)?)?).*$" "\\1" VALA_VERSION "${VALA_VERSION}")
+
+  add_executable(valac IMPORTED)
+  set_property(TARGET valac PROPERTY IMPORTED_LOCATION "${VALA_EXECUTABLE}")
 endif(VALA_EXECUTABLE)
 
 include(FindPackageHandleStandardArgs)
@@ -47,7 +74,7 @@ endfunction()
 
 macro(_vala_parse_source_file_path source)
   set (options)
-  set (oneValueArgs SOURCE TYPE OUTPUT_PATH OUTPUT_DIR GENERATED_SOURCE)
+  set (oneValueArgs SOURCE TYPE OUTPUT_PATH OUTPUT_DIR GENERATED_SOURCE FAST_VAPI)
   set (multiValueArgs)
   cmake_parse_arguments(VALAPATH "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   unset (options)
@@ -63,7 +90,7 @@ macro(_vala_parse_source_file_path source)
     string(TOLOWER "${${VALAPATH_TYPE}}" "${VALAPATH_TYPE}")
   endif()
 
-  if(VALAPATH_OUTPUT_PATH OR VALAPATH_GENERATED_SOURCE OR VALAPATH_OUTPUT_DIR)
+  if(VALAPATH_OUTPUT_PATH OR VALAPATH_GENERATED_SOURCE OR VALAPATH_OUTPUT_DIR OR VALAPATH_FAST_VAPI)
     get_filename_component(srcfile "${source}" ABSOLUTE BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
     string(LENGTH "${CMAKE_BINARY_DIR}" dirlen)
@@ -96,12 +123,15 @@ macro(_vala_parse_source_file_path source)
     string(REGEX REPLACE "\\.(vala|gs)$" ".c" "${VALAPATH_GENERATED_SOURCE}" "${outpath}")
   endif()
 
+  if(VALAPATH_FAST_VAPI)
+    string(REGEX REPLACE "\\.(vala|gs)$" ".vapi" "${VALAPATH_FAST_VAPI}" "${outpath}")
+  endif()
+
   if(VALAPATH_OUTPUT_DIR)
     get_filename_component("${VALAPATH_OUTPUT_DIR}" "${outpath}" DIRECTORY)
   endif()
 
   unset(outpath)
-#  message(FATAL_ERROR "Source: ${source}")
 endmacro()
 
 # vala_precompile_target(
@@ -129,8 +159,9 @@ endmacro()
 # Options:
 #
 #   TARGET
-#     Name of the target you're generating; it's generally best to make
-#     this the same as your executable or library target name, but not
+#     Target to create; it's generally best to make this similar to
+#     your executable or library target name (e.g., for a "foo"
+#     executable, "foo-vala" might be a good name), but not
 #     technically required.
 #   GENERATED_SOURCES
 #     Variable in which to store the list of generated sources (which
@@ -230,22 +261,22 @@ macro(vala_precompile_target TARGET GENERATED_SOURCES)
   endif()
 
   # Where to put the output
-  set(TARGET_DIR "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}-vala")
+  set(TARGET_DIR "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}")
 
   set(FAST_VAPI_STAMPS)
 
   # Create fast VAPI targets for each vala source
   foreach(source ${VALA_SOURCES})
     _vala_parse_source_file_path("${source}"
-      OUTPUT_PATH output_path)
+      FAST_VAPI fast_vapi_path)
 
     # We need somewhere to put the output…
-    _vala_mkdir_for_file("${TARGET_DIR}/${output_path}")
+    _vala_mkdir_for_file("${TARGET_DIR}/${fast_vapi_path}")
 
     # Create the target
     add_custom_command(
-      OUTPUT "${TARGET_DIR}/${output_path}.vapi-stamp"
-      BYPRODUCTS "${TARGET_DIR}/${output_path}.vapi"
+      OUTPUT "${TARGET_DIR}/${fast_vapi_path}.stamp"
+      BYPRODUCTS "${TARGET_DIR}/${fast_vapi_path}"
       DEPENDS
         "${source}"
         ${VALA_VAPIS}
@@ -253,13 +284,14 @@ macro(vala_precompile_target TARGET GENERATED_SOURCES)
       COMMAND "${VALA_EXECUTABLE}"
       ARGS
         "${source}"
-        --fast-vapi "${TARGET_DIR}/${output_path}.vapi"
+        --fast-vapi "${TARGET_DIR}/${fast_vapi_path}"
         ${VALAFLAGS}
-      COMMAND "${CMAKE_COMMAND}" ARGS -E touch "${TARGET_DIR}/${output_path}.vapi-stamp")
+      COMMAND "${CMAKE_COMMAND}" ARGS -E touch "${TARGET_DIR}/${fast_vapi_path}.stamp"
+      COMMENT "Generating fast VAPI ${TARGET_DIR}/${fast_vapi_path}")
 
-    list(APPEND FAST_VAPI_STAMPS "${TARGET_DIR}/${output_path}.vapi-stamp")
+    list(APPEND FAST_VAPI_STAMPS "${TARGET_DIR}/${fast_vapi_path}.stamp")
 
-    unset(output_path)
+    unset(fast_vapi_path)
   endforeach()
 
   # Create a ${TARGET_DIR}-fast-vapis target which depens on all the fast
@@ -270,10 +302,13 @@ macro(vala_precompile_target TARGET GENERATED_SOURCES)
     COMMAND "${CMAKE_COMMAND}" ARGS -E touch "${TARGET_DIR}/fast-vapis.stamp"
     DEPENDS
       ${FAST_VAPI_STAMPS}
-      ${VALAC_DEPENDS})
+      ${VALAC_DEPENDS}
+    COMMENT "Generating fast VAPIs for ${TARGET}")
 
   add_custom_target("${TARGET}-fast-vapis"
     DEPENDS "${TARGET_DIR}/fast-vapis.stamp")
+
+  set(VALA_GENERATED_SOURCE_STAMPS)
 
   # Add targets to generate C sources
   foreach(source ${VALA_SOURCES})
@@ -286,16 +321,17 @@ macro(vala_precompile_target TARGET GENERATED_SOURCES)
     foreach(src ${VALA_SOURCES})
       if(NOT "${src}" STREQUAL "${source}")
         _vala_parse_source_file_path("${src}"
-          OUTPUT_PATH src_output_path)
+          FAST_VAPI src_fast_vapi_path)
 
-        list(APPEND use_fast_vapi_flags --use-fast-vapi "${TARGET_DIR}/${src_output_path}.vapi")
+        list(APPEND use_fast_vapi_flags --use-fast-vapi "${TARGET_DIR}/${src_fast_vapi_path}")
 
-        unset(src_output_path)
+        unset(src_fast_vapi_path)
       endif()
     endforeach()
 
     add_custom_command(
-      OUTPUT "${TARGET_DIR}/${generated_source}"
+      OUTPUT "${TARGET_DIR}/${generated_source}.stamp"
+      BYPRODUCTS "${TARGET_DIR}/${generated_source}"
       COMMAND "${VALA_EXECUTABLE}"
       ARGS
         -d "${TARGET_DIR}/${output_dir}"
@@ -303,17 +339,27 @@ macro(vala_precompile_target TARGET GENERATED_SOURCES)
         "${source}"
         ${VALAFLAGS}
         ${use_fast_vapi_flags}
+      COMMAND "${CMAKE_COMMAND}" ARGS -E touch "${TARGET_DIR}/${generated_source}.stamp"
       DEPENDS
         "${TARGET}-fast-vapis"
-        ${VALA_VAPIS})
+        "${source}"
+        ${VALA_VAPIS}
+      COMMENT "Generating ${TARGET_DIR}/${generated_source}")
     unset(use_fast_vapi_flags)
 
     list(APPEND VALA_OUTPUT_SOURCES "${TARGET_DIR}/${generated_source}")
+    list(APPEND VALA_GENERATED_SOURCE_STAMPS "${TARGET_DIR}/${generated_source}.stamp")
 
-    unset(output_path)
+    unset(fast_vapi_path)
     unset(output_dir)
     unset(generated_source)
   endforeach()
+
+  add_custom_command(
+    OUTPUT "${TARGET_DIR}/stamp"
+    COMMAND "${CMAKE_COMMAND}" ARGS -E touch "${TARGET_DIR}/stamp"
+    DEPENDS ${VALA_GENERATED_SOURCE_STAMPS}
+    COMMENT "Generating sources from Vala for ${TARGET}")
 
   set("${GENERATED_SOURCES}" ${VALA_OUTPUT_SOURCES})
 
@@ -321,11 +367,11 @@ macro(vala_precompile_target TARGET GENERATED_SOURCES)
     set(use_fast_vapi_flags)
     foreach(source ${VALA_SOURCES})
       _vala_parse_source_file_path("${source}"
-        OUTPUT_PATH output_path)
+        FAST_VAPI fast_vapi_path)
 
-      list(APPEND use_fast_vapi_flags --use-fast-vapi "${TARGET_DIR}/${output_path}.vapi")
+      list(APPEND use_fast_vapi_flags --use-fast-vapi "${TARGET_DIR}/${fast_vapi_path}")
 
-      unset(output_path)
+      unset(fast_vapi_path)
     endforeach()
 
     add_custom_command(OUTPUT ${non_source_out_files}
@@ -343,14 +389,17 @@ macro(vala_precompile_target TARGET GENERATED_SOURCES)
 
   # CMake doesn't allow file-level dependencies across directories, so
   # we provide a target we can depend on from other directories.
-  add_custom_target("${TARGET}-vala"
+  add_custom_target("${TARGET}"
     DEPENDS
+      "${TARGET_DIR}/stamp"
       ${non_source_out_files}
-      ${VALAC_DEPENDS})
+      ${VALAC_DEPENDS}
+      ${VALA_GENERATED_SOURCE_STAMPS})
 
   unset(non_source_out_files)
   unset(non_source_valac_args)
 
+  unset(VALA_GENERATED_SOURCE_STAMPS)
   unset(FAST_VAPI_STAMPS)
   unset(TARGET_DIR)
   unset(VALAFLAGS)

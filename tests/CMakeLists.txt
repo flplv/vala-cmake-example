@@ -18,7 +18,7 @@ set(MY_PROJECT_VALA_CUSTOM_VAPIS
 
 # Compile Vala -> C
 vala_precompile_target(
-  test-${PROJECT_NAME}
+  test-${PROJECT_NAME}-vala
   MY_PROJECT_C_TEST_SOURCES
   ${MY_PROJECT_VALA_CUSTOM_VAPIS}
   ${MY_PROJECT_UNIT_TESTS_VALA_SOURCES}
@@ -28,6 +28,8 @@ set (TEST_EXECUTABLE_NAME ${PROJECT_NAME}_unit_tests)
 
 add_executable(${PROJECT_NAME}_unit_tests
     ${MY_PROJECT_C_TEST_SOURCES})
+
+add_dependencies("${PROJECT_NAME}_unit_tests" "test-${PROJECT_NAME}-vala")
 
 set_target_properties(${TEST_EXECUTABLE_NAME} PROPERTIES
 	INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/${LIBRARY_PATH})

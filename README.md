@@ -92,11 +92,11 @@ The executable provides a short example of how to use the option
 parser built in to GLib, which you can use to provide a good
 command-line interface for your program.
 
-## GTK3 GUI Example
+## GUI Example
 
 A stand-alone GUI application executable (*my-project-gui*) located at 
-*gui/* folder will be built and installed along with GSettings xmls.
-This example show how to use GSettings and Composite Template in a Vala
+*gui/* folder will be built and installed along with GSettings XMLs.
+The example shows how to use GSettings and Composite Template in a Vala
 GTK3 project with CMake.
 
 To run *my-project-gui* without installing you need to compile the GSettings xml

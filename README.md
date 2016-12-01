@@ -14,7 +14,7 @@ broken in other projects.  It is divided into three basic components:
 - **Unit tests** (*tests/*): Easily create tests for your common code
   using the testing framework created for
   [libgee](https://wiki.gnome.org/Projects/Libgee).
-- **Executable** (*executables/*): Executables(s) that make use of
+- **Executable** (*executables/*): Executable(s) that make use of
   your library.
 
 Project-wide features include:
@@ -91,6 +91,20 @@ and installed.  Like the tests, it links against the library.
 The executable provides a short example of how to use the option
 parser built in to GLib, which you can use to provide a good
 command-line interface for your program.
+
+## GTK3 GUI Example
+
+A stand-alone GUI application executable (*my-project-gui*) located at 
+*gui/* folder will be built and installed along with GSettings xmls.
+This example show how to use GSettings and Composite Template in a Vala
+GTK3 project with CMake.
+
+To run *my-project-gui* without installing you need to compile the GSettings xml
+and pass as eviroment variable to the executable:
+```
+glib-compile-schemas ./gui/settings/ --targetdir=./gui
+GSETTINGS_SCHEMA_DIR=./gui/ ./gui/my-project-gui
+```
 
 ## Internationalization and Localization
 

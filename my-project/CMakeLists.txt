@@ -83,6 +83,12 @@ set_target_properties (${MY_PROJECT_LIBRARY_NAME} PROPERTIES
 
 # GObject Introspection support
 find_package(GObjectIntrospection REQUIRED)
+# Gir Repositories support
+find_file(GIREPOSITORY_FILE GObject-2.0.gir /usr/share/gir-1.0 )
+if(GIREPOSITORY_FILE)
+else()
+    message(FATAL_ERROR "Package libgirepository-dev not found.")
+endif()
 
 # We already had valac write a GIR, now we need to compile it to a
 # typelib.

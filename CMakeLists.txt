@@ -66,7 +66,7 @@ set(CPACK_SOURCE_IGNORE_FILES
 include(CPack)
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
-find_package(GLib "2.32" REQUIRED)
+find_package(GLib "2.38" REQUIRED)
 find_package(Vala "0.30" REQUIRED)
 
 find_package(PkgConfig)
@@ -90,7 +90,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE "Debug")
 endif(CMAKE_BUILD_TYPE STREQUAL "")
 
-list(APPEND VALA_COMPILER_FLAGS "--target-glib=2.32")
+list(APPEND VALA_COMPILER_FLAGS "--target-glib=2.38")
 list(APPEND VALA_COMPILER_FLAGs_DEBUG "--debug")
 
 # Lots of perfectly valid Vala code will trigger warnings from the C

@@ -1,20 +1,20 @@
 namespace MyProject.GUI {
+
+    [GtkTemplate (ui = "/com/github/felipe-lavratti/vala-unittests-cmake/main-window.ui")]
+    public class MainWindow : Gtk.ApplicationWindow {
+        [GtkChild]
+        private Gtk.ToggleButton toggle_button;
+
+        public MainWindow ()
+        {
+            var settings = new GLib.Settings ("com.github.felipe-lavratti.vala-unittests-cmake");
+            settings.bind ("active", toggle_button, "active", GLib.SettingsBindFlags.DEFAULT);
+        }
+    }
+
     private class Application : Gtk.Application {
         protected override void activate () {
-            Gtk.Builder builder = new Gtk.Builder ();
-            try {
-                builder.add_from_resource ("/com/github/felipe-lavratti/vala-unittests-cmake/main-window.ui");
-            } catch (GLib.Error e) {
-                GLib.error ("Unable to load resources: %s", e.message);
-            }
-
-            Gtk.ApplicationWindow window = builder.get_object ("main-window") as Gtk.ApplicationWindow;
-            if (window == null)
-                GLib.error ("Unable to load main window");
-
-            GLib.Settings settings = new GLib.Settings ("com.github.felipe-lavratti.vala-unittests-cmake");
-            settings.bind ("active", builder.get_object ("toggle-button"), "active", GLib.SettingsBindFlags.DEFAULT);
-
+            var window = new MainWindow();
             window.application = this;
             window.show ();
         }
@@ -23,9 +23,10 @@ namespace MyProject.GUI {
             Object (application_id: "org.github.felipe-lavratti.vala-unittests-cmake.gui");
         }
     }
-}
 
-private static int main (string[] args) {
-    var app = new MyProject.GUI.Application ();
-    return app.run (args);
+    private static int main (string[] args) {
+        var app = new MyProject.GUI.Application ();
+        return app.run (args);
+    }
+
 }

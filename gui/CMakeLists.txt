@@ -9,6 +9,8 @@ find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(GTK REQUIRED gtk+-3.0)
 
+list(APPEND VALA_COMPILER_FLAGS "--gresources=${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.gresource.xml")
+
 # Compile Vala sources to C
 vala_precompile_target(
   "${MY_PROJECT_GUI_NAME}-vala"

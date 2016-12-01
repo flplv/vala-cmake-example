@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/felipe-lavratti/vala-unittests-cmake.svg?branch=master)](https://travis-ci.org/felipe-lavratti/vala-unittests-cmake)
+[![Build Status](https://travis-ci.org/felipe-lavratti/vala-cmake-example.svg?branch=master)](https://travis-ci.org/felipe-lavratti/vala-unittests-cmake)
 
 # Vala Project Template
 
